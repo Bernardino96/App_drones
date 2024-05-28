@@ -20,16 +20,16 @@ exports.obterDrone = async (req, res) => {
     res.status(500).json({ message: 'Erro ao obter drone', error });
   }
 };
-
-exports.criarDrone = async (req, res) => {
-  const { nome, cliente } = req.body;
+exports.registarDrone = async (req, res) => {
+  const { nome, clienteId } = req.body;
 
   try {
-    const novoDrone = new Drone({ nome, cliente });
+
+    const novoDrone = new Drone({ nome, clienteId });
     await novoDrone.save();
-    res.status(201).json({ message: 'Drone criado com sucesso', novoDrone });
+    res.status(201).json({ message: 'Drone registado com sucesso', novoDrone });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao criar drone', error });
+    res.status(500).json({ message: 'Erro ao registar drone', error });
   }
 };
 
