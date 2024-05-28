@@ -1,26 +1,27 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const clienteSchema = new mongoose.Schema({
-    id: { type: Number, required: true, unique: true },
-    nome: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+const ClienteSchema = new mongoose.Schema({
+  nome: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true }
 });
 
-// Hash da senha antes de salvar
-clienteSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) {
-        return next();
-    }
+
+ClienteSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
+  } catch (err) {
+    next(err);
+  }
 });
 
-// Comparar senha
-clienteSchema.methods.comparePassword = async function(password) {
-    return await bcrypt.compare(password, this.password);
-};
+const Cliente = mongoose.model('Cliente', ClienteSchema);
 
-module.exports = mongoose.model('Cliente', clienteSchema);
+module.exports = Cliente;

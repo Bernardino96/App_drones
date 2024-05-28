@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const droneController = require('../controllers/dronesController');
+const dronesController = require('../controllers/dronesController');
 
-router.get('/drones', droneController.listarTodosOsDrones);
-router.post('/drones', droneController.adicionarDrone);
-router.get('/drones/:id', droneController.obterDronePorId);
-router.put('/drones/:id', droneController.atualizarDrone);
-router.delete('/drones/:id', droneController.deletarDrone);
+router.get('/', dronesController.listarDrones);
+router.get('/:id', dronesController.obterDrone);
+router.post('/', dronesController.criarDrone);
+router.put('/:id', dronesController.atualizarDrone);
+router.delete('/:id', dronesController.eliminarDrone);
 
 module.exports = router;

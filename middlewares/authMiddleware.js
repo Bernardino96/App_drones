@@ -1,21 +1,17 @@
 const jwt = require('jsonwebtoken');
-const Cliente = require('../models/Cliente');
 
-exports.protect = async (req, res, next) => {
-    let token;
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
-    }
+exports.authMiddleware = (req, res, next) => {
+  const token = req.header('Authorization').replace('Bearer ', '');
 
-    if (!token) {
-        return res.status(401).json({ mensagem: "Não autorizado, token não encontrado" });
-    }
+  if (!token) {
+    return res.status(401).json({ message: 'Acesso negado. Token não fornecido.' });
+  }
 
-    try {
-        const decoded = jwt.verify(token, 'seuSegredoJWT');
-        req.cliente = await Cliente.findById(decoded.id).select('-password');
-        next();
-    } catch (erro) {
-        res.status(401).json({ mensagem: "Não autorizado, token inválido" });
-    }
+  try {
+    const decoded = jwt.verify(token, 'seuSegredoJWT');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(400).json({ message: 'Token inválido.' });
+  }
 };

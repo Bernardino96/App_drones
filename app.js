@@ -1,31 +1,34 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const clienteRoutes = require('./routes/clientesRoutes');
-const droneRoutes = require('./routes/dronesRoutes');
-const authRoutes = require('./routes/authRoutes'); 
-const bodyParser = require('body-parser');
-
-
-const mongoDBUrl = 'mongodb+srv://3491415:xzdsaewq4321@cluster1.gqjm5n1.mongodb.net/drones';
-
-// Conexão ao MongoDB
-mongoose.connect(mongoDBUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log("Conexão com o MongoDB Atlas estabelecida com sucesso!"))
-  .catch(err => console.error("Erro ao conectar ao MongoDB Atlas:", err));
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const authRoutes = require('./routes/authRoutes');
+const clientesRoutes = require('./routes/clientesRoutes');
+const dronesRoutes = require('./routes/dronesRoutes'); // Adicionamos as rotas de drones aqui
+const piecesRoutes = require('./routes/piecesRoutes');
+const assembliesRoutes = require('./routes/assembliesRoutes');
+const swaggerDocument = YAML.load('./api.yaml');
 
 const app = express();
 
-// Middleware
-app.use(bodyParser.json()); // Para parsing de application/json
+app.use(express.json());
 
-// Registro de Rotas
-app.use('/api', clienteRoutes); // Base path para todas as rotas de clientes
-app.use('/api', droneRoutes); // Base path para todas as rotas de drones
-app.use('/api/auth', authRoutes); // Base path para todas as rotas de autenticação
+mongoose.connect('mongodb+srv://3491415:xzdsaewq4321@cluster1.gqjm5n1.mongodb.net/drones', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Conectado à base de dados MongoDB'))
+.catch(err => console.error('Erro ao conectar à base de dados', err));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('/api/auth', authRoutes);
+app.use('/api/clientes', clientesRoutes);
+app.use('/api/drones', dronesRoutes); // Adicionamos as rotas de drones aqui
+app.use('/api/pecas', piecesRoutes);
+app.use('/api/montagens', assembliesRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor a funcionar na porta ${PORT}`);
+  console.log(`Servidor a correr na porta ${PORT}`);
 });
