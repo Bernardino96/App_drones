@@ -1,15 +1,28 @@
-const Drone = require('../models/Drone');
+const Drone = require('../models/Drone'); 
 
-exports.listarDrones = async (req, res) => {
+exports.addDrone = async (req, res) => {
+  const { name, model, clienteId } = req.body;
+
+  try {
+    const drone = new Drone({ name, model, clienteId });
+    await drone.save();
+
+    res.status(201).json({ message: 'Drone adicionado com sucesso', drone });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao adicionar drone', error });
+  }
+};
+
+exports.getAllDrones = async (req, res) => {
   try {
     const drones = await Drone.find();
     res.json(drones);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao listar drones', error });
+    res.status(500).json({ message: 'Erro ao buscar drones', error });
   }
 };
 
-exports.obterDrone = async (req, res) => {
+exports.getDroneById = async (req, res) => {
   try {
     const drone = await Drone.findById(req.params.id);
     if (!drone) {
@@ -17,42 +30,30 @@ exports.obterDrone = async (req, res) => {
     }
     res.json(drone);
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao obter drone', error });
-  }
-};
-exports.registarDrone = async (req, res) => {
-  const { nome, clienteId } = req.body;
-
-  try {
-
-    const novoDrone = new Drone({ nome, clienteId });
-    await novoDrone.save();
-    res.status(201).json({ message: 'Drone registado com sucesso', novoDrone });
-  } catch (error) {
-    res.status(500).json({ message: 'Erro ao registar drone', error });
+    res.status(500).json({ message: 'Erro ao buscar drone', error });
   }
 };
 
-exports.atualizarDrone = async (req, res) => {
+exports.updateDrone = async (req, res) => {
   try {
-    const droneAtualizado = await Drone.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!droneAtualizado) {
+    const drone = await Drone.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!drone) {
       return res.status(404).json({ message: 'Drone não encontrado' });
     }
-    res.json({ message: 'Drone atualizado com sucesso', droneAtualizado });
+    res.json({ message: 'Drone atualizado com sucesso', drone });
   } catch (error) {
     res.status(500).json({ message: 'Erro ao atualizar drone', error });
   }
 };
 
-exports.eliminarDrone = async (req, res) => {
+exports.deleteDrone = async (req, res) => {
   try {
-    const droneEliminado = await Drone.findByIdAndDelete(req.params.id);
-    if (!droneEliminado) {
+    const drone = await Drone.findByIdAndDelete(req.params.id);
+    if (!drone) {
       return res.status(404).json({ message: 'Drone não encontrado' });
     }
-    res.json({ message: 'Drone eliminado com sucesso' });
+    res.json({ message: 'Drone deletado com sucesso' });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao eliminar drone', error });
+    res.status(500).json({ message: 'Erro ao deletar drone', error });
   }
 };

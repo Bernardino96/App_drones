@@ -4,7 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const authRoutes = require('./routes/authRoutes');
 const clientesRoutes = require('./routes/clientesRoutes');
-const dronesRoutes = require('./routes/dronesRoutes'); // Adicionamos as rotas de drones aqui
+const dronesRoutes = require('./routes/dronesRoutes');
 const piecesRoutes = require('./routes/piecesRoutes');
 const assembliesRoutes = require('./routes/assembliesRoutes');
 const swaggerDocument = YAML.load('./api.yaml');
@@ -24,7 +24,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/clientes', clientesRoutes);
-app.use('/api/drones', dronesRoutes); // Adicionamos as rotas de drones aqui
+app.use('/api/drones', dronesRoutes);
 app.use('/api/pecas', piecesRoutes);
 app.use('/api/montagens', assembliesRoutes);
 

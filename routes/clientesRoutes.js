@@ -8,3 +8,4 @@ router.put('/:id', clientesController.atualizarCliente);
 router.delete('/:id', clientesController.eliminarCliente);
 
 module.exports = router;
+s

@@ -68,3 +68,23 @@ exports.eliminarMontagem = async (req, res) => {
     res.status(500).json({ message: 'Erro ao eliminar montagem', error });
   }
 };
+
+// Função para calcular estatísticas sobre montagens
+exports.getStatistics = async (req, res) => {
+  try {
+    const totalMontagens = await Assembly.countDocuments();
+    const pecasUsadas = await Assembly.aggregate([
+      { $unwind: "$pecas" },
+      { $group: { _id: "$pecas", count: { $sum: 1 } } }
+    ]);
+
+    const estatisticas = {
+      totalMontagens,
+      pecasUsadas
+    };
+
+    res.json(estatisticas);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao obter estatísticas', error });
+  }
+};
